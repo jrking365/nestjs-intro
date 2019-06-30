@@ -16,10 +16,27 @@ export class ProductsService {
     }
 
     getSingleProduct(productId: string) {
-        const product = this.products.find(prod => prod.id === productId);
+        const product = this.findProduct(productId);
+        return { ...product.product };
+    }
+
+    updateProduct(productId: string, title: string, desc: string, price: number) {
+        const product = this.findProduct(productId).product;
+        const index = this.findProduct(productId).productIndex;
+        const updatedProduct = { ...product };
+        updatedProduct.title = title ? title : updatedProduct.title;
+        updatedProduct.description = desc ? desc : updatedProduct.description;
+        updatedProduct.price = price ? price : updatedProduct.price;
+        this.products[index] = updatedProduct;
+
+    }
+
+    private findProduct(id: string) {
+        const productIndex = this.products.findIndex(prod => prod.id === id);
+        const product = this.products[productIndex];
         if (!product) {
             throw new NotFoundException('could not find products');
         }
-        return { ...product };
+        return { product, productIndex };
     }
 }
